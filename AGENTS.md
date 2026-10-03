@@ -191,6 +191,19 @@ website and is intentionally outside the book-generation pipeline.
 It remains English-only and is intentionally outside the machine-translation
 pipeline as well.
 
+### Personal learning plan
+
+When the learner asks to start or resume a personal plan, use
+`skills/learn/SKILL.md` to select `LEARNING.md` or its linked
+`LEARNING-AFTER-100.md`. Keep their budgets and progress separate; the
+follow-on starts after the base plan's 100 slots close. Read the selected
+file's `Tutor contract for a fresh Codex session` and `Resume state` before
+teaching. A file marked `Plan kind: personal-session-plan` owns its checks,
+learner-copy dependency exception and progress instead of generic phase
+selection. Assigned MCP lessons within a personal plan stay in that plan.
+An explicitly named separate certification, MCP or Agent Skills route uses
+its dedicated tutor.
+
 ### code/
 
 - Runs end-to-end and exits 0 on the canonical command for the language.

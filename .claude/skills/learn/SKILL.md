@@ -3,9 +3,9 @@ name: learn
 version: 1.0.0
 description: >
   Interactive lesson tutor for the AI Engineering from Scratch curriculum.
-  Reads LEARNING.md, fetches the next lesson, teaches it section by section
-  in the terminal, quizzes at the end, and records progress. Works cloned or
-  entirely over raw.githubusercontent.com — no setup required.
+  Reads LEARNING.md and a linked personal follow-on plan, teaches the next
+  lesson or session interactively, quizzes, and records progress. Works cloned or
+  entirely over raw.githubusercontent.com with local learner state.
   Trigger phrases: "next lesson", "teach me", "continue the course",
   "let's learn", "resume learning"
 tags: [tutor, curriculum, ai-engineering, interactive-learning]
@@ -13,9 +13,10 @@ tags: [tutor, curriculum, ai-engineering, interactive-learning]
 
 # Learn
 
-You are the tutor for the **AI Engineering from Scratch** curriculum. One
-invocation = one lesson, taught interactively: the learner should type,
-answer, and run things — never just scroll. Works with any agent.
+You are the tutor for the **AI Engineering from Scratch** curriculum.
+The default is one lesson per invocation; a marked personal session plan
+owns its pacing through Step 0. Teach interactively: the learner should type,
+answer and run the code. Works with any agent.
 
 ## Host invocation contract
 
@@ -51,7 +52,10 @@ https://raw.githubusercontent.com/rohitg00/ai-engineering-from-scratch/main/<pat
 Before Step 0, resolve every "resume" or "continue" request against these
 supported state files and their route owners:
 
-- `LEARNING.md` belongs to `learn` for the full curriculum.
+- `LEARNING.md` belongs to `learn` for the full curriculum or a marked
+  personal session plan.
+- `LEARNING-AFTER-100.md` belongs to the same `learn` owner as the personal
+  base plan. Keep the two cursors separate; Step 0 selects their order.
 - `MCP-LEARNING.md` belongs to `learn-mcp` for the Model Context Protocol
   (MCP) route.
 - `MCP-ENGINEERING-LEARNING.md` is the legacy filename for that same
@@ -64,7 +68,8 @@ owner immediately even when other state files exist. If that owner is `learn`,
 continue to Step 0; otherwise invoke the named owner and stop this skill.
 
 For an unnamed resume or continue request, collect the owners whose state files
-exist, grouping both MCP filenames under `learn-mcp`. If exactly one route owner
+exist, grouping both personal-plan files under `learn` and both MCP filenames
+under `learn-mcp`. If exactly one route owner
 remains, resume it before Step 0: continue here only for `learn`; otherwise
 invoke that owner and stop this skill. `learn-mcp` owns legacy-file migration
 and collision reporting. If two or more route owners remain, list their
@@ -75,6 +80,11 @@ route from file recency or merge one route's progress into another state file.
 Legacy runtimes may expose `learn-mcp-engineering` as an alias. Accept it only
 to reach `learn-mcp`; render every learner-facing handoff as `learn-mcp` and
 name the route Model Context Protocol (MCP).
+
+A request naming a personal-plan file or one of its numbered slots stays in
+`learn`, including its assigned MCP lesson block. A standalone request for
+the MCP route or `learn-mcp` uses the dedicated tutor. A lesson topic within
+the selected personal plan does not switch route owners.
 
 ## Focused MCP handoff
 
@@ -100,7 +110,31 @@ tool-poisoning prerequisite gate before Lesson 26, and the release gate.
 
 ## Step 0 — Locate state
 
-Read `LEARNING.md` from the current directory.
+Read `LEARNING.md` from the current directory. For the marked personal
+100-hour plan with a linked `LEARNING-AFTER-100.md`, select state as follows:
+
+- While fewer than 100 base slots are closed, select `LEARNING.md`, including
+  when the follow-on is requested early. Explain the sequence and continue
+  the base pending task within its remaining minutes.
+- Once 100 base slots are closed and its cursor is `budget_exhausted`, select
+  `LEARNING-AFTER-100.md` on the next `learn` invocation. Read its contract
+  and resume state; activate a waiting follow-on or resume its open slot.
+- An explicit request to inspect the finished base plan reports its gates
+  and gaps without restarting it. If the follow-on is also exhausted, report
+  its separate result and stop teaching within these budgets.
+- If the base file is missing, unmarked, or its closed count conflicts with
+  the log/cursor, report and resolve that state before activating this
+  follow-on. Use recorded minutes and evidence, not file recency or the
+  filename alone.
+
+Follow the selected marked plan's `Tutor contract for a fresh Codex session`
+and `Resume state` instead of generic Steps 0-5 below. That contract owns
+session selection, recall/repair, quizzes and recording; use its pending
+task and remaining minutes rather than phase statuses. Update only its own
+progress and budget. When the base hour 100 closes, record and report its
+result; the follow-on begins in a later invocation, without extending that
+hour. Other marked personal plans use their own contracts as before. The
+dedicated route handoffs still apply to an explicitly named separate route.
 
 - **Found**: the next lesson is the first not-yet-logged lesson of the first
   phase whose Status is `Do` or `Review` (phase order, lesson order). If the
